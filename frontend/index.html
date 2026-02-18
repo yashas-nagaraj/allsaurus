@@ -1,1 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Strangerrr Thingsss</title>
+    <style>
+        body { background: #000; color: #c41e3a; font-family: Courier; text-align: center; }
+        h1 { font-size: 3em; text-shadow: 0 0 10px red; }
+        button { background: #222; color: white; border: 1px solid red; padding: 10px; margin: 5px; cursor: pointer; }
+        button:hover { background: red; }
+        .box { border: 1px solid #444; width: 60%; margin: 20px auto; padding: 20px; text-align: left; background: #111; }
+        input { padding: 10px; width: 70%; background: #222; color: white; border: 1px solid #555; }
+    </style>
+</head>
+<body>
+    <h1>STRANGERRR THINGSSS</h1>
+    <div>
+        <button onclick="loadSeason(1)">Season 1</button>
+        <button onclick="loadSeason(2)">Season 2</button>
+        <button onclick="loadSeason(3)">Season 3</button>
+        <button onclick="loadSeason(4)">Season 4</button>
+        <button onclick="loadSeason(5)">Season 5</button>
+    </div>
+    <div id="info" class="box"></div>
+    <div class="box">
+        <h3>Community Q&A</h3>
+        <input type="text" id="qInput" placeholder="Ask a question...">
+        <button onclick="ask()">Submit</button>
+        <div id="qaList"></div>
+    </div>
+    <script>
+        // We will replace this using sed later, or manually update it
+        const API = "http://a08249e417952426e936ceca3bd10e42-436693947.ap-south-1.elb.amazonaws.com:5000/api"; 
 
+        async function loadSeason(id) {
+            const res = await fetch(`${API}/season/${id}`);
+            const data = await res.json();
+            document.getElementById("info").innerHTML = `<h2>${data.title}</h2><p>${data.eps.join('<br>')}</p>`;
+        }
+        async function loadQA() {
+            const res = await fetch(`${API}/questions`);
+            const data = await res.json();
+            let html = "";
+            for (let id in data) {
+                html += `<p><b>Q: ${data[id].q}</b></p>`;
+                (data[id].a || []).forEach(ans => html += `<small>A: ${ans}</small><br>`);
+                html += `<input id="ans-${id}"><button onclick="reply(${id})">Reply</button><hr>`;
+            }
+            document.getElementById("qaList").innerHTML = html;
+        }
+        async function ask() {
+            await fetch(`${API}/questions`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({question: document.getElementById('qInput').value})});
+            loadQA();
+        }
+        async function reply(id) {
+            await fetch(`${API}/questions`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({question_id: id, answer: document.getElementById(`ans-${id}`).value})});
+            loadQA();
+        }
+        loadQA();
+    </script>
+</body>
+</html>
