@@ -1,1 +1,36 @@
-
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend
+        image: yashasnagaraj/stranger-backend:latest # Jenkins will update this
+        ports:
+        - containerPort: 5000
+        env:
+        - name: DB_HOST
+          valueFrom: { secretKeyRef: { name: db-secret, key: host } }
+        - name: DB_PASSWORD
+          value: "strangerpassword"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: backend
+  ports:
+    - port: 5000
+      targetPort: 5000
