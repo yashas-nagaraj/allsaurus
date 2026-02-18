@@ -1,1 +1,25 @@
-
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: db-init-job
+spec:
+  template:
+    spec:
+      containers:
+      - name: mysql-init
+        image: mysql:8.0
+        command: ["/bin/sh", "-c"]
+        args:
+          - |
+            mysql -h $(DB_HOST) -u admin -pstrangerpassword -e "
+            CREATE DATABASE IF NOT EXISTS stranger_db;
+            USE stranger_db;
+            CREATE TABLE IF NOT EXISTS questions (id INT AUTO_INCREMENT PRIMARY KEY, question_text VARCHAR(255));
+            CREATE TABLE IF NOT EXISTS answers (id INT AUTO_INCREMENT PRIMARY KEY, question_id INT, answer_text VARCHAR(255));"
+        env:
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: host
+      restartPolicy: Never
