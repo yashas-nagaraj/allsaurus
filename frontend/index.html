@@ -29,7 +29,7 @@
     </div>
     <script>
         // We will replace this using sed later, or manually update it
-        const API = "http://a08249e417952426e936ceca3bd10e42-436693947.ap-south-1.elb.amazonaws.com:5000/api"; 
+        const API = "http://BACKEND_URL_PLACEHOLDER:5000/api";
 
         async function loadSeason(id) {
             const res = await fetch(`${API}/season/${id}`);
