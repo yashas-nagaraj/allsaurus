@@ -35,6 +35,9 @@ module "eks" {
       instance_types = ["t3.micro"]  # Fix for AWS Free Tier
     }
   }
+  # 👇 ADD THESE TWO LINES 👇
+  enable_cluster_creator_admin_permissions = true
+  authentication_mode                      = "API_AND_CONFIG_MAP"
 }
 
 # 3. FIREWALL (Allow EKS to talk to RDS)
