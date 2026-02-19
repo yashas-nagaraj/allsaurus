@@ -44,6 +44,8 @@ resource "aws_security_group" "rds_sg" {
 module "db" {
   source  = "terraform-aws-modules/rds/aws"
   version = "~> 6.0"
+  family               = "mysql8.0"
+  major_engine_version = "8.0"
   identifier = "allsaurus-db"
   engine            = "mysql"
   engine_version    = "8.0"
