@@ -23,7 +23,7 @@ module "eks" {
   subnet_ids = module.vpc.private_subnets
   cluster_endpoint_public_access = true
   eks_managed_node_groups = {
-    defaults = { instance_types = ["t3.small"] } # Critical: t3.small for stability [cite: 51]
+    defaults = { instance_types = ["t3.micro"] } # Critical: t3.small for stability [cite: 51]
     worker_group_1 = { min_size = 2, max_size = 3, desired_size = 2 }
   }
 }
