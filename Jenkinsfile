@@ -41,7 +41,8 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('', 'dockerhub-login') {
-                        sh "docker build -t yashasnagaraj/stranger-backend:${BUILD_NUMBER} ./backend"
+                        // 👇 FIX: Added --no-cache here
+                        sh "docker build --no-cache -t yashasnagaraj/stranger-backend:${BUILD_NUMBER} ./backend"
                         sh "docker push yashasnagaraj/stranger-backend:${BUILD_NUMBER}"
                     }
                 }
@@ -60,13 +61,13 @@ pipeline {
                     BACKEND_ELB=\$(kubectl get svc backend-service -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
                 done
                 
-                # THE BULLETPROOF FIX: No spaces to confuse the shell!
                 sed -i "s|BACKEND_URL_PLACEHOLDER|\$BACKEND_ELB|g" frontend/index.html
                 """
 
                 script {
                     docker.withRegistry('', 'dockerhub-login') {
-                        sh "docker build -t yashasnagaraj/stranger-frontend:${BUILD_NUMBER} ./frontend"
+                        // 👇 FIX: Added --no-cache here
+                        sh "docker build --no-cache -t yashasnagaraj/stranger-frontend:${BUILD_NUMBER} ./frontend"
                         sh "docker push yashasnagaraj/stranger-frontend:${BUILD_NUMBER}"
                     }
                 }
@@ -75,7 +76,5 @@ pipeline {
                 sh 'kubectl apply -f k8s/frontend.yaml'
             }
         }
-        
-        // Stage 6 removed to save EKS memory and ensure pipeline success!
     }
 }
