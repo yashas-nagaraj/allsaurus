@@ -1,4 +1,3 @@
-
 # 1. NETWORK (VPC)
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
@@ -26,16 +25,16 @@ module "eks" {
 
   eks_managed_node_groups = {
     defaults = { 
-      instance_types = ["t3.micro"] 
+      instance_types = ["t3.small"] 
     }
     worker_group_1 = { 
       min_size       = 2
       max_size       = 3 
       desired_size   = 2 
-      instance_types = ["t3.micro"]  # Fix for AWS Free Tier
+      instance_types = ["t3.small"]  # Upgraded for Prometheus/Grafana Monitoring
     }
   }
-  # 👇 ADD THESE TWO LINES 👇
+  
   enable_cluster_creator_admin_permissions = true
   authentication_mode                      = "API_AND_CONFIG_MAP"
 }
