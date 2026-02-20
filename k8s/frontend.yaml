@@ -15,7 +15,7 @@ spec:
       containers:
       - name: frontend
         # ⚠️ Make sure this matches your DockerHub repo
-        image: yashasnagaraj/humangasaurus-frontend
+        image: yashasnagaraj/stranger-frontend:latest
         ports:
         - containerPort: 80
 ---
