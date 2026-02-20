@@ -22,6 +22,10 @@ spec:
           valueFrom: { secretKeyRef: { name: db-secret, key: host } }
         - name: DB_PASSWORD
           value: "strangerpassword"
+        - name: DB_USER
+          value: "admin"
+        - name: DB_NAME
+          value: "stranger_db"
 ---
 apiVersion: v1
 kind: Service
