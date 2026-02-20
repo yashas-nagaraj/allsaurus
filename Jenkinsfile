@@ -41,7 +41,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('', 'dockerhub-login') {
-                        // 👇 FIX: Added --no-cache here
+                        // FORCE NO CACHE
                         sh "docker build --no-cache -t yashasnagaraj/stranger-backend:${BUILD_NUMBER} ./backend"
                         sh "docker push yashasnagaraj/stranger-backend:${BUILD_NUMBER}"
                     }
@@ -66,7 +66,7 @@ pipeline {
 
                 script {
                     docker.withRegistry('', 'dockerhub-login') {
-                        // 👇 FIX: Added --no-cache here
+                        // FORCE NO CACHE
                         sh "docker build --no-cache -t yashasnagaraj/stranger-frontend:${BUILD_NUMBER} ./frontend"
                         sh "docker push yashasnagaraj/stranger-frontend:${BUILD_NUMBER}"
                     }
@@ -74,6 +74,14 @@ pipeline {
                 
                 sh "sed -i 's|image: yashasnagaraj/stranger-frontend:.*|image: yashasnagaraj/stranger-frontend:${BUILD_NUMBER}|g' k8s/frontend.yaml"
                 sh 'kubectl apply -f k8s/frontend.yaml'
+            }
+        }
+
+        stage('6. Deploy Monitoring') {
+            steps {
+                sh 'helm repo add prometheus-community https://prometheus-community.github.io/helm-charts'
+                sh 'helm repo update'
+                sh 'helm upgrade --install monitoring prometheus-community/kube-prometheus-stack'
             }
         }
     }
